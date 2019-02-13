@@ -66,8 +66,8 @@ test_set = test_data_gen.flow_from_directory(
     class_mode='binary'
 )
 
-if os.path.isfile('2nd_try.h5'):
-    model.load_weights('2nd_try.h5')
+if os.path.isfile('1st_try.h5'):
+    model.load_weights('1st_try.h5')
 
 history = model.fit_generator(
     train_set,
@@ -77,7 +77,7 @@ history = model.fit_generator(
     validation_steps= 800 // batch_size
 )
 
-model.save_weights('2nd_try.h5')
+model.save_weights('1st_try.h5')
 
 image_path = './dogscats/test1/' + random.choice(os.listdir('./dogscats/test1/'))
 plt.figure()
@@ -89,9 +89,6 @@ test_image = image.load_img(image_path, target_size=(150, 150))
 test_image = image.img_to_array(test_image)
 test_image = np.expand_dims(test_image, axis = 0)
 result = model.predict(test_image)
-
-print(train_set.class_indices)
-print(result.shape)
 
 if result >= 0.5:
     prediction = 'dog'
