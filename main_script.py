@@ -1,9 +1,10 @@
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Activation, Dropout
 from keras.preprocessing.image import ImageDataGenerator, image
+from time import time
+import tensorflow as tf
+from keras.callbacks import TensorBoard
 
-# from IPython.display import display
-# from PIL import Image
 
 import numpy as np
 import os, random
@@ -42,6 +43,7 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 
 # Set Batch Size
 batch_size = 16
+epochs = 10
 
 # rescale images
 train_data_gen = ImageDataGenerator(
@@ -66,15 +68,23 @@ test_set = test_data_gen.flow_from_directory(
     class_mode='binary'
 )
 
+print(model.summary())
+
 if os.path.isfile('1st_try.h5'):
     model.load_weights('1st_try.h5')
 
-history = model.fit_generator(
+tbCallBack = tf.keras.callbacks.TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=0, batch_size=batch_size,
+                            write_graph=True, write_images=True
+)
+
+
+model.fit_generator(
     train_set,
     steps_per_epoch=2000 // batch_size,
-    epochs=50,
+    epochs=epochs,
     validation_data=test_set,
-    validation_steps= 800 // batch_size
+    validation_steps= 800 // batch_size,
+    callbacks=[tbCallBack]
 )
 
 model.save_weights('1st_try.h5')
@@ -97,10 +107,11 @@ else:
 
 print(prediction)
 
-print(history.history.keys())
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+
+# print(history.history.keys())
+# plt.plot(history.history['acc'])
+# plt.plot(history.history['val_acc'])
+# plt.ylabel('accuracy')
+# plt.xlabel('epoch')
+# plt.legend(['train', 'test'], loc='upper left')
+# plt.show()
