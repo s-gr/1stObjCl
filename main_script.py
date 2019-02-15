@@ -1,9 +1,9 @@
 from keras.models import Sequential, load_model
 from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Activation, Dropout
 from keras.preprocessing.image import ImageDataGenerator, image
-from time import time
-import tensorflow as tf
-from keras.callbacks import TensorBoard
+# from time import time
+# import tensorflow as tf
+# from keras.callbacks import TensorBoard
 
 
 import numpy as np
@@ -73,18 +73,18 @@ print(model.summary())
 if os.path.isfile('1st_try.h5'):
     model.load_weights('1st_try.h5')
 
-tbCallBack = tf.keras.callbacks.TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=0, batch_size=batch_size,
-                            write_graph=True, write_images=True
-)
+# tbCallBack = tf.keras.callbacks.TensorBoard(log_dir='./logs/{}'.format(time()), histogram_freq=0, batch_size=batch_size,
+#                             write_graph=True, write_images=True
+# )
 
 
-model.fit_generator(
+history = model.fit_generator(
     train_set,
     steps_per_epoch=2000 // batch_size,
     epochs=epochs,
     validation_data=test_set,
-    validation_steps= 800 // batch_size,
-    callbacks=[tbCallBack]
+    validation_steps= 800 // batch_size #,
+    # callbacks=[tbCallBack]
 )
 
 model.save_weights('1st_try.h5')
@@ -107,11 +107,11 @@ else:
 
 print(prediction)
 
-
-# print(history.history.keys())
-# plt.plot(history.history['acc'])
-# plt.plot(history.history['val_acc'])
-# plt.ylabel('accuracy')
-# plt.xlabel('epoch')
-# plt.legend(['train', 'test'], loc='upper left')
-# plt.show()
+print(history.history.keys())
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.ylim(0, 1)
+plt.show()
